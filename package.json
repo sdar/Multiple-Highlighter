@@ -1,0 +1,17 @@
+{
+  "title": "multiple-highlighter",
+  "name": "multiplehighlighter",
+  "version": "0.0.1",
+  "description": "Highlights multiple words or regular expresions using different colors",
+  "main": "index.js",
+  "author": "Sdar",
+  "id": "@multiplehighlighter",
+  "engines": {
+    "firefox": ">=38.0a1"
+  },
+  "license": "MIT",
+  "permissions": {"private-browsing": true},
+  "icon": {
+    "64": "data/icon-64.png"
+  }
+}

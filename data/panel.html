@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<LINK href="panel.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    
+<div id="panel">
+    <!--<div id ="header" role="button" tabindex="-1" style="cursor: pointer;">Multiple Highlighter</div> -->
+    <div id = top>
+        <div class="onoffswitch" title="Enables highlighting on page load">
+            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="onloadenable" tabindex="-1" onclick="mes(this);">
+            <label class="onoffswitch-label" for="onloadenable">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+            </label>
+        </div>
+        <span role="button" tabindex="-1" style="cursor: pointer;" id="clean"class="cleanbutton" title="Clean all highlighted words" onclick="mes(this);">CLEAN</span>
+    </div>
+    <div id=middle>
+        <div class="pack">
+            
+            <input type=color id="XPHLinput0" class="colorpicker" tabindex="-1" onchange="mes(this);">
+            <textarea name="textarea" id="XPHLtextarea0" class="textarea" onblur="mes(this);" onFocus="rsize(null,330);"></textarea>
+            
+            <div class='polymer-checkbox-cont'>
+                <input type='checkbox' id="XPHLenable0" class='polymer-checkbox' checked onclick="mes(this);"/>
+                <label for='XPHLenable0'><span></span>
+            </div>
+            <div class='clear'></div>
+        </div>
+                
+        <div class="pack">
+            <input type=color id="XPHLinput1" class="colorpicker" tabindex="-1" onchange="mes(this);">
+            <textarea name="textarea" id="XPHLtextarea1" class="textarea" onblur="mes(this);" onFocus="rsize(null,330);"></textarea>
+            
+            <div class='polymer-checkbox-cont'>
+                <input type='checkbox' id="XPHLenable1" class='polymer-checkbox' checked onclick="mes(this);"/>
+                <label for='XPHLenable1'><span></span>
+            </div>
+            <div class='clear'></div>
+        </div>
+                
+        <div class="pack">
+            <input type=color id="XPHLinput2" class="colorpicker" tabindex="-1" onchange="mes(this);">
+            <textarea name="textarea" id="XPHLtextarea2" class="textarea" onblur="mes(this);" onFocus="rsize(null,330);"></textarea>
+            
+            <div class='polymer-checkbox-cont'>
+                <input type='checkbox' id="XPHLenable2" class='polymer-checkbox' checked onclick="mes(this);"/>
+                <label for='XPHLenable2'><span></span>
+            </div>
+            <div class='clear'></div>
+        </div>
+                
+        <div class="pack">
+            <input type=color id="XPHLinput3" class="colorpicker" tabindex="-1" onchange="mes(this);">
+            <textarea name="textarea" id="XPHLtextarea3" class="textarea" onblur="mes(this);" onFocus="rsize(null,330);"></textarea>
+            
+            <div class='polymer-checkbox-cont'>
+                <input type='checkbox' id="XPHLenable3" class='polymer-checkbox' checked onclick="mes(this);"/>
+                <label for='XPHLenable3'><span></span>
+            </div>
+                <div class='clear'></div>
+        </div>
+                
+        <div class="pack">
+            <input type=color id="XPHLinput4" class="colorpicker" tabindex="-1" onchange="mes(this);">
+            <textarea name="textarea" id="XPHLtextarea4" class="textarea" onblur="mes(this);" onFocus="rsize(null,330);"></textarea>
+            
+            <div class='polymer-checkbox-cont'>
+                <input type='checkbox' id="XPHLenable4" class='polymer-checkbox' checked onclick="mes(this);"/>
+                <label for='XPHLenable4'><span></span>
+            </div> 
+        <div class='clear'></div>
+        </div>
+    </div>
+           
+    <div id=bottom>
+        
+        <div class='polymer-checkbox-cont'>
+            <input type='checkbox' id="casesens" class='polymer-checkbox'  onclick="mes(this);"/>
+            <label for='casesens'><span></span>
+            <div class="bottext">Case Sensitive</div>
+        </div>
+            
+        <div class='polymer-checkbox-cont'>
+            <input type='checkbox' id="regexp" class='polymer-checkbox'  onclick="mes(this);"/>
+            <label for='regexp'><span></span>
+            <div class="bottext">Regular expresions</div>
+        </div>
+    </div>
+</div>
+<script src="panel.js"></script>
+</body>
+</html>
