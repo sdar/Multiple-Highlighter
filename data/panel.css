@@ -2,19 +2,11 @@ body {
     background-color: #333333;
     overflow:hidden;
 }
+
 #panel {
     background-color: #333333;
     width: 335px;
-    //height:270px;
-    //overflow:hidden;
 }
-
-/*#panel2 {
-    background-color: #999999;
-    width: 335px;
-    height:350px;
-    overflow:hidden;
-}*/
 
 #header {
     margin-top:7px;
@@ -22,7 +14,6 @@ body {
     background-color:#555555;
     text-align:center;
     color:white;
-    //font-size: 16px;
     font-family: Arial;
     outline: 0;
     user-select:none;
@@ -106,7 +97,6 @@ body {
 
 .cleanbutton {
     text-decoration: none;
-    //margin:0px 0px 9px 11px;
     height:36px;
     overflow: hidden;
     display: inline-block;

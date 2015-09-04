@@ -1,4 +1,4 @@
-function findAndReplace (searchText, replacement) {
+function findAndReplace (searchText, color, bgcolor, spanclass) {
     if (!searchText){
         return;
     }
@@ -7,14 +7,27 @@ function findAndReplace (searchText, replacement) {
     var frag = document.createDocumentFragment();
     var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     var nextnode=true;
+    var span = document.createElement("span");
+    span.style.backgroundColor = bgcolor;
+    span.style.color = color;
+    span.className = spanclass;
 
     return new Promise(function(resolve) {
         while(nextnode){
             if(searchText.test(walker.currentNode.nodeValue)
-               && (excludes + ',').indexOf(walker.currentNode.parentNode.nodeName.toLowerCase() + ',') === -1
-              ){
-                var html = walker.currentNode.data.replace(searchText, replacement);
-                wrap.innerHTML = html;
+              && (excludes + ',').indexOf(walker.currentNode.parentNode.nodeName.toLowerCase() + ',') === -1){
+                var split = walker.currentNode.data.split( searchText );
+                //console.log( split );
+                split.forEach( ( text, index ) => {
+                    var append;
+                    if( index % 2 ) {
+                        append = span.cloneNode();
+                        append.textContent = text;
+                    } else {
+                        append = document.createTextNode(text);
+                    }
+                    frag.appendChild( append );
+                });
                 while (wrap.firstChild) {                
                     frag.appendChild(wrap.firstChild);    
                 }
@@ -53,17 +66,15 @@ self.port.on("highlight", function(xhl, foo) {
     for (let i of foo) {
         if (!xhl.storage.botcheckboxes['regexp']) {
             var text = xhl.storage.textareas['XPHLtextarea'+i].replace(new RegExp(',', 'g'),'|');
-            text = new RegExp(text, casesens);
+            text = new RegExp("("+text+")", casesens);
         } else {
             var text = matchesRegExpWithFlags.exec(xhl.storage.textareas['XPHLtextarea'+i]);
-            text = new RegExp(text[1], text[2]);
+            text = new RegExp("("+text[1]+")", text[2]);
             //var text = xhl.storage.textareas['XPHLtextarea'+i];
         }
         //highlight
-        promises.push(findAndReplace(text,
-        '<span class="XPHLenable'+i
-        +'" style="color:'+getcontrast(xhl.storage.colorpickers['XPHLinput'+i])
-        +';Background-color:'+xhl.storage.colorpickers['XPHLinput'+i]+'">$&</span>'));
+        promises.push(findAndReplace(text, getcontrast(xhl.storage.colorpickers['XPHLinput'+i])
+          , xhl.storage.colorpickers['XPHLinput'+i], 'XPHLenable'+i));
     }
     //All promises resolved.
     Promise.all(promises).then(function() {
