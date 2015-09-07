@@ -3,6 +3,7 @@ function findAndReplace (searchText, color, bgcolor, spanclass) {
         return;
     }
     var excludes = 'html,head,style,title,link,script,noscript,object,iframe,canvas,applet';
+    var spanclasses = ["XPHLenable0","XPHLenable1","XPHLenable2","XPHLenable3","XPHLenable4"];
     var wrap = document.createElement('div');
     var frag = document.createDocumentFragment();
     var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -16,24 +17,35 @@ function findAndReplace (searchText, color, bgcolor, spanclass) {
         while(nextnode){
             if(searchText.test(walker.currentNode.nodeValue)
               && (excludes + ',').indexOf(walker.currentNode.parentNode.nodeName.toLowerCase() + ',') === -1){
-                var split = walker.currentNode.data.split( searchText );
-                //console.log( split );
-                split.forEach( ( text, index ) => {
-                    var append;
-                    if( index % 2 ) {
-                        append = span.cloneNode();
-                        append.textContent = text;
-                    } else {
-                        append = document.createTextNode(text);
-                    }
-                    frag.appendChild( append );
-                });
-                while (wrap.firstChild) {                
-                    frag.appendChild(wrap.firstChild);    
+            	//this prevents the creation of multiple spans on the same match.
+            	if(spanclasses.indexOf(walker.currentNode.parentNode.className) > -1){
+            		if(walker.currentNode.parentNode.className != spanclass) {
+            			walker.currentNode.parentNode.className = spanclass;
+            			walker.currentNode.parentNode.style.color = color;
+            			walker.currentNode.parentNode.style.backgroundColor = bgcolor;
+            		}
+            	}else{
+                	var split = walker.currentNode.data.split( searchText );
+                	split.forEach( ( text, index ) => {
+                	    var append;
+                	    if( index % 2 ) {
+                	        append = span.cloneNode();
+                	        append.textContent = text;
+                	    } else {
+                	        append = document.createTextNode(text);
+                	    }
+                	    frag.appendChild( append );
+                	});
+                	while (wrap.firstChild) {                
+                	    frag.appendChild(wrap.firstChild);    
+                	}
+                	var nodeToReplace=walker.currentNode;
+                	nextnode=walker.nextNode();
+                	nodeToReplace.parentNode.replaceChild(frag,nodeToReplace);
                 }
-                var nodeToReplace=walker.currentNode;
-                nextnode=walker.nextNode();
-                nodeToReplace.parentNode.replaceChild(frag,nodeToReplace);            
+
+
+
             }else{
                 nextnode=walker.nextNode();
             }
