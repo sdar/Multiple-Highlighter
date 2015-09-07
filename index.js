@@ -4,8 +4,8 @@ var timer = require('sdk/timers');
 var pageMod = require('sdk/page-mod');
 const { MenuButton } = require('./menu-button');
 
-//To destroy pagemod when it's not needed
-var mod = null;
+//To destroy onload pagemod when it's not needed
+var mod;
 // To add delay to the panel resize
 var paneldelay;
 //########## Create default values ##########//
@@ -67,8 +67,9 @@ panel.port.on("panel-changed", function (object) {
     //On load checkbox
     if (object.id == "onloadenable") {
         xhl.storage.onloadenable = object.checked;
-        if (object.checked == true)
+        if (object.checked == true){highlight("all");}
             onloadenabled ();
+        }
     } else
 
     //Highlight checkboxes
@@ -154,7 +155,6 @@ function clean (thing) {
 }
 
 //########### ENABLE ON PAGE LOAD ###########//
-if (xhl.storage.onloadenable) onloadenabled ();
 function onloadenabled () {
     if (xhl.storage.onloadenable) {
         mod = pageMod.PageMod({
@@ -170,7 +170,5 @@ function onloadenabled () {
                 });
             }
         });
-
-    } else 
-    if (mod!=null){mod.destroy();}
+    } else {mod.destroy();}
 }
