@@ -69,7 +69,6 @@ panel.port.on("panel-changed", function (object) {
         xhl.storage.onloadenable = object.checked;
         if (object.checked == true){highlight("all");}
             onloadenabled ();
-        }
     } else
 
     //Highlight checkboxes
