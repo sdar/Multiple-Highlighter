@@ -26,7 +26,11 @@ function findAndReplace (searchText, color, bgcolor, spanclass) {
                     walker.currentNode.parentNode.style.color = color;
                     walker.currentNode.parentNode.style.backgroundColor = bgcolor;
                 }else{
-                    var split = walker.currentNode.data.split( searchText );
+                    var regex = [];
+                    walker.currentNode.data.replace(searchText, function(match)
+                        regex.push(match));
+                    var regex = new RegExp("("+regex.join("|")+")");
+                    var split = walker.currentNode.data.split( regex );
                     split.forEach( ( text, index ) => {
                         var append;
                         if( index % 2 ) {
