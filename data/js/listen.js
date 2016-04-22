@@ -1,10 +1,11 @@
-var tim;
-var excludes = 'html,head,style,title,link,script,noscript,object,iframe,canvas,applet';
+'use strict';
+var tim,
+    excludes = 'html,head,style,title,link,script,noscript,object,iframe,canvas,applet';
 function observeDomChanges(rootNode, callback) {
     var observer = new MutationObserver(function (mutations) {
-        for (i in mutations) {
+        for (let i in mutations) {
             var mutation = mutations[i];
-            for (j = 0, k = mutation.addedNodes.length; j < k; j++) {
+            for (let j = 0, k = mutation.addedNodes.length; j < k; j++) {
                 var addedNode = mutation.addedNodes[j];
                 if ( addedNode.nodeType == Node.ELEMENT_NODE && 
                   (excludes + ',').indexOf(addedNode.nodeName.toLowerCase() + ',') === -1 ) {

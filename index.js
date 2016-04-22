@@ -1,33 +1,55 @@
-var self = require("sdk/self");
-var tabs = require("sdk/tabs");
-var timer = require('sdk/timers');
-var pageMod = require('sdk/page-mod');
+'use strict';
 const { MenuButton } = require('./menu-button');
+var self = require("sdk/self"),
+    tabs = require("sdk/tabs"),
+    timer = require('sdk/timers'),
+    { Hotkey } = require("sdk/hotkeys"),
+    pageMod = require('sdk/page-mod'),
+    xhl = require("sdk/simple-storage"),
+    cm = require("sdk/context-menu"),
+    loadmod, selmod,
+    paneldelay,
+    working = false,
+    contextm, list,
+    highlightHK, cleanHK,
+    xhl2 = require("sdk/simple-storage");
 
-//To destroy onload pagemod when it's not needed
-var mod;
-// To add delay to the panel resize
-var paneldelay;
-//########## Create default values ##########//
-var xhl = require("sdk/simple-storage");
-//If MHL is doing changes
-var working = false;
+if (xhl.storage.textareas) {
+    //onload
+    delete xhl.storage.onloadenable
+    //HLCheckboxes
+    delete xhl.storage.hlcheckboxes
+    //BottomCheckboxes
+    delete xhl.storage.botcheckboxes
+    //Context Menus colorpickers
+    delete xhl.storage.CMcolorpicker
+    //Textareas
+    let textareasdata = xhl.storage.textareas;
+    delete xhl.storage.textareas
+    //ColorPickers
+    let colorpickersdata = xhl.storage.colorpickers;
+    delete xhl.storage.colorpickers
+    xhl2.storage.textareas = Object.keys(textareasdata).map(function (key) {return textareasdata[key]});
+    xhl2.storage.colorpickers = Object.keys(colorpickersdata).map(function (key) {return colorpickersdata[key]});
+}
 
-if (!xhl.storage.onloadenable)
-    xhl.storage.onloadenable = false;
-
-if (!xhl.storage.hlcheckboxes)
-    xhl.storage.hlcheckboxes = {XPHLenable0:true, XPHLenable1:true, XPHLenable2:true, XPHLenable3:true, XPHLenable4:true};
-
-if (!xhl.storage.botcheckboxes)
-    xhl.storage.botcheckboxes = {casesens:false, regexp:false};
-
-if (!xhl.storage.textareas)
-    xhl.storage.textareas = {XPHLtextarea0:'', XPHLtextarea1:'', XPHLtextarea2:'', XPHLtextarea3:'', XPHLtextarea4:''};
-
-if (!xhl.storage.colorpickers)
-    xhl.storage.colorpickers = {XPHLinput0:"#FF0000", XPHLinput1:"#FF6600", XPHLinput2:"#FFFF00", XPHLinput3:"#33FF33", XPHLinput4:"#3333FF"};
-
+//Highlight tab storage
+xhl2.storage.onloadenable = xhl2.storage.onloadenable || false;
+xhl2.storage.colorpickers = xhl2.storage.colorpickers || ["#FF0000", "#FF6600", "#FFFF00", "#33FF33", "#3333FF"];
+xhl2.storage.textareas = xhl2.storage.textareas || ["", "", "", "", ""];
+xhl2.storage.enabled = xhl2.storage.enabled || [true, true, true, true, true];
+xhl2.storage.casesens = xhl2.storage.casesens || [false, false, false, false, false];
+xhl2.storage.regexp = xhl2.storage.regexp || [false, false, false, false, false];
+//Selection tab storage
+xhl2.storage.enableselection = xhl2.storage.enableselection || true;
+xhl2.storage.selectionrequirekey = xhl2.storage.selectionrequirekey || true;
+xhl2.storage.selectiondelay = xhl2.storage.selectiondelay || 0;
+xhl2.storage.selectioncolors = xhl2.storage.selectioncolors || ["#5F72C9", "#C98A00", "#00FFFF", "#7FFFBB", "#999999"];
+//Advanced tab storage
+xhl2.storage.separator = xhl2.storage.separator || ",";
+xhl2.storage.highlightshortcut = xhl2.storage.highlightshortcut || "Ctrl + Shift + O";
+xhl2.storage.cleanshortcut = xhl2.storage.cleanshortcut || "Ctrl + Alt + Shift + O";
+xhl2.storage.selectionkey = xhl2.storage.selectionkey || "Shift";
 
 //############# Add Menu Button #############//
 var btn = MenuButton({
@@ -40,134 +62,237 @@ var btn = MenuButton({
     },
     onClick: click
 });
-//Handle click button highlight : panel
-function click(state, isMenu) {  
-isMenu ? panel.show({position: btn}) : highlight("all");
+//Handle click highlight : panel
+function click(state, isMenu) {
+    isMenu ? panel.show({ position: btn }) : highlight("all");
+    //enable tooltips
+    require('sdk/view/core').getActiveView(panel).setAttribute('tooltip', 'aHTMLTooltip');
 }
 
 //############# ADD PANEL #############//
 var panel = require("sdk/panel").Panel({
-    width: 350,
-    height: 251,
     contentURL: self.data.url("panel.html")
 });
-//send settings to panel
-panel.port.emit("settings", xhl);
-//Resize panel when needed
-panel.port.on("text-resize", function (size) {
-    size[0] == null ? size[0]=350:1;
-    size[1] == null ? size[1]=251:1;
-    //Clear panel timer so there's no resize if another textarea is selected.
-    timer.clearTimeout(paneldelay);
-    timer.setTimeout(function(){panel.resize(size[0],size[1])}, 280);
+panel.on("show", function() {
+    panel.port.emit("getPanelSize");
 });
+panel.port.on("panelSize", function(width, height) {
+    panel.resize(width, height);
+});
+//send settings to panel when ready
+panel.port.on("ready", function() {
+    panel.port.emit("settings", xhl2);
+});
+//Splice arrays
+panel.port.on("removerow", function(index) {
+    xhl2.storage.colorpickers.splice(index, 1);
+    xhl2.storage.textareas.splice(index, 1);
+    xhl2.storage.enabled.splice(index, 1);
+    xhl2.storage.casesens.splice(index, 1);
+    xhl2.storage.regexp.splice(index, 1);
+    //remove contextmenu
+    //contextm.removeItem(list[index]);
+    contextm.destroy();
+    addcontextmenu();
+});
+
 //########### Com panel -> Main ###########//
-panel.port.on("panel-changed", function (object) {
-    //console.log("id: " +object.id + " valor: " + object.value + " checked: " + object.checked);
-    //On load checkbox
-    if (object.id == "onloadenable") {
-        xhl.storage.onloadenable = object.checked;
-        if (object.checked == true){highlight("all");}
-            onloadenabled ();
-    } else
+panel.port.on("panel-changed", function(name, value, index) {
+    if (index == null)
+        xhl2.storage[name] = value;
+    else
+        xhl2.storage[name][index] = value;
 
-    //Highlight checkboxes
-    if (object.id.match(/XPHLenable/)) {
-        xhl.storage.hlcheckboxes[object.id] = object.checked;
-        //clean on checbox !checked
-        !object.checked ? clean(object.id) : highlight(object.id);
-    } else
-
-    //Bottom checkboxes
-    if (object.id == "casesens" || object.id == "regexp") {
-        xhl.storage.botcheckboxes[object.id] = object.checked;
-    } else
-
-    //TextAreas
-    if (object.id.match(/XPHLtextarea/)) {
-        xhl.storage.textareas[object.id] = object.value;
-        //Reduce panel height on textarea lossfocus
-        paneldelay = timer.setTimeout(function(){panel.resize(350,251)}, 280);
-    } else
-
-    //ColorPickers
-    if (object.id.match(/XPHLinput/)) {
-        xhl.storage.colorpickers[object.id] = object.value;
-    } else
-
-    //CleanButton (not for storage)
-    if (object.id == "clean") {
-        clean(xhl.storage.hlcheckboxes);
+    //extra functions
+    switch (name) {
+        case "onloadenable":
+            value == true && highlight("all");
+            onloadenabled();
+            break;
+        case "enabled":
+            value == true ? highlight(index) : clean(index);
+            break;
+        case "enableselection":
+            selectionFunction();
+            break;
+        case "colorpickers":
+            updatecm(value, index);
+            break;
+        case "highlightshortcut":
+        case "cleanshortcut":
+        	highlightHK.destroy();
+        	cleanHK.destroy();
+        	addhotkeys();
+        	break;
     }
+});
 
-    //this should never happen
-    else {console.log("this should never happen: ->  " + 
-        "id: " +object.id + " valor: " + object.value + " checked: " + object.checked);}
+panel.port.on("message", function(value) {
+    if (value == "highlight") highlight("all");
+    if (value == "clean") clean(xhl2.storage.enabled);
 });
 
 //########### CREATE KEYBOARD SHORTCUTS ###########//
-var { Hotkey } = require("sdk/hotkeys");
+addhotkeys();
+function addhotkeys() {
+    let hlhk = xhl2.storage.highlightshortcut.split("+");
+    let clhk = xhl2.storage.cleanshortcut.split("+");
 
-var highlightHK = Hotkey({
-    combo: "accel-shift-o",
-    onPress: function() {
-        highlight("all");
-    }
-});
-var cleanHK = Hotkey({
-    combo: "accel-alt-shift-o",
-    onPress: function() {
-        clean(xhl.storage.hlcheckboxes);
-    }
-});
+    clhk = clhk.map(function(e) {
+        return e.trim()
+    });
+    hlhk = hlhk.map(function(e) {
+        return e.trim()
+    });
+    hlhk = hlhk.join("-");
+    clhk = clhk.join("-");
+
+    highlightHK = Hotkey({
+        combo: hlhk,
+        onPress: function() { highlight("all"); }
+    });
+    cleanHK = Hotkey({
+        combo: clhk,
+        onPress: function() { clean(xhl2.storage.enabled); }
+    });
+}
 
 //########### HIGHLIGHT FUNCTION ###########//
-function highlight (foo) {
+function highlight(stuff) {
     working = true;
     var worker = tabs.activeTab.attach({
-        contentScriptFile: self.data.url("highlight.js")
+        contentScriptFile: self.data.url("js/highlight.js")
     });
-    if (foo == "all") {
-        worker.port.emit("highlight", xhl, foo);
-    } else {
-    //Send just the number of object to be highlighted.
-        for (var i = 0; i < Object.keys(xhl.storage.hlcheckboxes).length; i++){
-            if (foo == Object.keys(xhl.storage.hlcheckboxes)[i])
-                worker.port.emit("highlight", xhl, i);
-        }
-    }
-    worker.port.on("finished", function() {
-        working = false;
-    })
+    worker.port.emit("highlight", xhl2, stuff);
+    worker.port.on("finished", function() { working = false; });
 }
+
+function selectionHighlight(text, colornumber) {
+    working = true;
+    var worker = tabs.activeTab.attach({
+        contentScriptFile: self.data.url("js/highlight.js")
+    });
+    worker.port.emit("selectionhighlight", text, xhl2.storage.selectioncolors[colornumber], colornumber);
+    worker.port.on("finished", function() { working = false; });
+};
+
 
 //########### CLEAN FUNCTION ###########//
-function clean (thing) {
-	working = true;
+function clean(stuff) {
+    working = true;
     var worker = tabs.activeTab.attach({
-        contentScriptFile: self.data.url("clean.js")
+        contentScriptFile: self.data.url("js/clean.js")
     });
-    worker.port.emit("clean", thing);
-    worker.port.on("finished", function() {
-        working = false;
-    })
+    worker.port.emit("clean", stuff);
+    worker.port.on("finished", function() { working = false; });
 }
 
+function selectionClean(text, colornumber) {
+    working = true;
+    var worker = tabs.activeTab.attach({
+        contentScriptFile: self.data.url("js/clean.js")
+    });
+    worker.port.emit("selectionclean", 'XPH2S' + colornumber);
+    worker.port.on("finished", function() { working = false; });
+};
+
 //########### ENABLE ON PAGE LOAD ###########//
-function onloadenabled () {
-    if (xhl.storage.onloadenable) {
-        mod = pageMod.PageMod({
+onloadenabled();
+function onloadenabled() {
+    if (xhl2.storage.onloadenable) {
+        loadmod = pageMod.PageMod({
             include: "*",
             attachTo: ["existing", "top"],
             contentScriptWhen: "end",
-            contentScriptFile: self.data.url("listen.js"),
+            contentScriptFile: self.data.url("js/listen.js"),
             onAttach: function(worker) {
                 worker.port.on("onloadhl", function() {
-                    if (!working) {
-                        highlight("all");
-                    }
+                    if (!working) highlight("all");
                 });
             }
         });
-    } else {mod.destroy();}
+    } else { if (loadmod) loadmod.destroy(); }
+}
+
+//########### SELECTION PANEL ###########//
+selectionFunction();
+function selectionFunction() {
+    if (xhl2.storage.enableselection) {
+        selmod = pageMod.PageMod({
+            include: "*",
+            attachTo: ["existing", "top"],
+            contentScriptWhen: "ready",
+            contentScriptFile: self.data.url("js/selection.js"),
+            onAttach: function(worker) {
+                worker.port.on("selsettingsrequest", function() {
+                    worker.port.emit("selsettings",
+                        xhl2.storage.selectioncolors, xhl2.storage.selectiondelay,
+                        xhl2.storage.selectionkey, xhl2.storage.selectionrequirekey);
+                });
+                worker.port.on("selection", function( text, colornumber, job) { 
+                if (job == "clean")
+                    selectionClean(text,colornumber);
+                else
+                    selectionHighlight(text,colornumber);
+            });
+            }
+        });
+    } else {
+        if (selmod) selmod.destroy();
+    }
+}
+
+//############## CONTEXT MENU ##############//
+addcontextmenu();
+function addcontextmenu() {
+    list = [];
+
+    for (let i = 0; i < xhl2.storage.colorpickers.length; i++) {
+        list[i] = cm.Item({
+            label: "List" + (i + 1),
+            data: i.toString(),
+            contentScript: 'self.on("click", function (node, data) {  ' +
+                '   var text = window.getSelection().toString();  ' +
+                '   self.postMessage([text, data]);               ' +
+                '});',
+            onMessage: function(text) {
+                addtolist(text);
+            },
+            image: self.data.url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20fill%3D%22%23' + xhl2.storage.colorpickers[i].substring(1) + '%22%2F%3E%3C%2Fsvg%3E')
+        });
+    }
+
+    contextm = cm.Menu({
+        label: "Add to",
+        context: cm.SelectionContext(),
+        contentScript: 'self.on("context", function () {' +
+            '  var text = window.getSelection().toString();' +
+            '  if (text.length > 20)' +
+            '    text = text.substr(0, 20) + "...";' +
+            '  return "Add " +"\\""+ text +"\\""+ " to";' +
+            '});',
+        items: list,
+        image: self.data.url("icon-16.png")
+    });
+}
+
+
+function updatecm(value, index) {
+    if (list.length <= index) {
+        contextm.destroy();
+        addcontextmenu();
+    } else
+    list[index].image = self.data.url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%2248%22%20height%3D%2248%22%20fill%3D%22%23' + xhl2.storage.colorpickers[index].substring(1) + '%22%2F%3E%3C%2Fsvg%3E');
+}
+
+
+function addtolist(text) {
+    text[0] = text[0].trim();
+
+    if (xhl2.storage.textareas[text[1]] =='')
+        xhl2.storage.textareas[text[1]] = text[0];
+    else
+        xhl2.storage.textareas[text[1]] = xhl2.storage.textareas[text[1]] + xhl2.storage.separator + text[0];
+
+    panel.port.emit("updatetextareas", text[1], xhl2.storage.textareas[text[1]]);
 }
