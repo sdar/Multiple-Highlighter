@@ -201,7 +201,7 @@ onloadenabled();
 function onloadenabled() {
     if (xhl2.storage.onloadenable) {
         loadmod = pageMod.PageMod({
-            include: "*",
+            include: ["*", "file://*"],
             attachTo: ["existing", "top"],
             contentScriptWhen: "end",
             contentScriptFile: [self.data.url("js/listen.js"), self.data.url("js/highlight.js")],
@@ -225,7 +225,7 @@ selectionFunction();
 function selectionFunction() {
     if (xhl2.storage.enableselection) {
         selmod = pageMod.PageMod({
-            include: "*",
+            include: ["*", "file://*"],
             attachTo: ["existing", "top"],
             contentScriptWhen: "ready",
             contentScriptFile: self.data.url("js/selection.js"),
