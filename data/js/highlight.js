@@ -1,9 +1,10 @@
 'use strict';
+
 function findAndReplace(searchText, color, bgcolor, spanclass) {
     if (!searchText) return;
     let nodearray = [],
         walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT),
-        excludes = 'head,style,title,link,script,noscript,object,canvas,applet',
+        excludes = 'style,title,link,script,noscript,object,canvas,applet',
         spanclasses = /XPH2/,
         span = document.createElement("hlspan");
     span.style.backgroundColor = bgcolor;
@@ -53,7 +54,6 @@ function findAndReplace(searchText, color, bgcolor, spanclass) {
         resolve();
     });
 }
-
 
 function populate(split, span) {
     let frag = document.createDocumentFragment();
@@ -119,13 +119,12 @@ self.port.on("highlight", function(xhl2, foo) {
 self.port.on("selectionhighlight", function(seltext, color, colornumber) {
     let promises = [];
     let text = new RegExp(seltext, "gi");
-    promises.push(findAndReplace( text, getcontrast(color), color, 'XPH2S' + colornumber ));
+    promises.push(findAndReplace(text, getcontrast(color), color, 'XPH2S' + colornumber));
 
     Promise.all(promises).then(function() {
         setTimeout(function() { self.port.emit("finished") }, 220);
     })
 });
-//(searchText, color, bgcolor, spanclass)
 
 //Function that get the font color (YIQ)
 //more info: http://24ways.org/2010/calculating-color-contrast/
