@@ -1,5 +1,7 @@
 'use strict';
+
 const modifier = /Control|Shift|Alt|PageUp|PageDown|Escape/;
+
 function tab(evt, tabName) {
     // Declare all variables
     var i, tabcontent, tablinks;
@@ -21,7 +23,6 @@ function tab(evt, tabName) {
     evt.currentTarget.className += " active";
     resize();
 }
-
 document.getElementsByClassName("tablinks")[0].click();
 
 function resize() {
@@ -128,11 +129,10 @@ function toggle(bool) {
     for (var i = 0; i < elements.length; i++) {
         elements[i].style.display = style;
         if (style == '')
-            text[i].style.border= "1px solid " +color[i].value;
-        else text[i].style.border= "1px solid #000";
+            text[i].style.border = "1px solid " + color[i].value;
+        else text[i].style.border = "1px solid #000";
     }
 }
-
 
 //Advanced tab
 var old, success = false;
@@ -154,7 +154,6 @@ function removeEvent(el) {
             check(el);
     }, 5);
 }
-
 
 function keydown(event) {
     event.preventDefault();
@@ -360,7 +359,7 @@ function change(element) {
     addon.port.emit("panel-changed", name, value, index);
 }
 
-function mes (el) {
+function mes(el) {
     addon.port.emit("message", el.className);
 }
 

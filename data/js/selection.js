@@ -1,6 +1,7 @@
 'use strict';
+
 let color = ['#ff0000', '#00ff00', '#0000ff', '#ffa500', '#ffff00'],
-	keyCode,
+    keyCode,
     keymap = {
         "49": "1",
         "50": "2",
@@ -25,7 +26,6 @@ self.port.on("selsettings", function(rcolor, pdelay, photkey, prequire) {
     require = prequire;
     div.style.background = color[0];
 });
-
 
 //div.setAttribute("title","Right click or Middle Mouse Button to clean this color");
 div.style.cursor = "pointer";
@@ -73,7 +73,7 @@ function popup(x, y) {
 function keydown(event) {
     if (require == true) {
         if (event.key == keyCode) {
-        	event.preventDefault();
+            event.preventDefault();
             if (event.repeat)
                 return;
             document.body.appendChild(div);
@@ -93,13 +93,13 @@ function keyup(event) {
 }
 
 function test(event) {
-	event.preventDefault();
+    event.preventDefault();
 
-	let job;
-	if (event.which == 2 || event.which == 3) job = "clean";
-	else job = "highlight";
-	self.port.emit("selection", text, colornumber, job);
-    
+    let job;
+    if (event.which == 2 || event.which == 3) job = "clean";
+    else job = "highlight";
+    self.port.emit("selection", text, colornumber, job);
+
     text = '';
     window.removeEventListener('keydown', keydown, false);
     window.removeEventListener('keyup', keyup, false);
