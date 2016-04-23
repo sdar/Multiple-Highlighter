@@ -110,7 +110,7 @@ panel.port.on("panel-changed", function(name, value, index) {
             onloadenabled();
             break;
         case "enabled":
-            value == true ? highlight(index) : clean(index);
+            value == true && xhl2.storage.enabled.length <= index ? highlight(index) : clean(index);
             break;
         case "enableselection":
             selectionFunction();
@@ -275,7 +275,7 @@ function addcontextmenu() {
             '  var text = window.getSelection().toString();' +
             '  if (text.length > 20)' +
             '    text = text.substr(0, 20) + "...";' +
-            '  return "Add " +"\\""+ text +"\\""+ " to";' +
+            '  return "Add " +"\\""+ text.trim() +"\\""+ " to";' +
             '});',
         items: list,
         image: self.data.url("icon-16.png")
