@@ -48,7 +48,8 @@ div.addEventListener("wheel", wheel);
 window.addEventListener("mouseup", function(event) {
     if (event.which == 1)
         selection = window.getSelection();
-
+    
+    if (typeof j === "undefined") return
     if (selection.toString() !== '') {
         text = selection.toString().replace(/\s+$/, '');
         popup(event.clientX + "px", event.clientY + "px");

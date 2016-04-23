@@ -9,6 +9,9 @@
   "engines": {
     "firefox": ">=38.0a1"
   },
+  "permissions": {
+    "multiprocess": true
+  },
   "license": "MIT",
   "permissions": {"private-browsing": true},
   "icon": {
