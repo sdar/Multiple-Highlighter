@@ -204,14 +204,20 @@ function onloadenabled() {
             include: "*",
             attachTo: ["existing", "top"],
             contentScriptWhen: "end",
-            contentScriptFile: self.data.url("js/listen.js"),
+            contentScriptFile: [self.data.url("js/listen.js"), self.data.url("js/highlight.js")],
             onAttach: function(worker) {
                 worker.port.on("onloadhl", function() {
-                    if (!working) highlight("all");
+                    if (!working) {
+                        working = true;
+                        worker.port.emit("highlight", xhl2, "all");
+                        worker.port.on("finished", function() { working = false; });
+                    }
                 });
             }
         });
-    } else { if (loadmod) loadmod.destroy(); }
+    } else {
+        if (loadmod) loadmod.destroy();
+    }
 }
 
 //########### SELECTION PANEL ###########//
