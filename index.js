@@ -110,7 +110,9 @@ panel.port.on("panel-changed", function(name, value, index) {
             onloadenabled();
             break;
         case "enabled":
-            value == true && xhl2.storage.enabled.length <= index ? highlight(index) : clean(index);
+        	if (xhl2.storage.textareas[index]) {
+            	value == true ? highlight(index) : clean(index);
+            }
             break;
         case "enableselection":
             selectionFunction();
