@@ -134,7 +134,8 @@ panel.port.on("panel-changed", function(name, value, index) {
             for (let i = 0; i < selworkers.length; i++) {
                 selworkers[i].port.emit("selsettings",
                     xhl2.storage.selectioncolors, xhl2.storage.selectiondelay,
-                    xhl2.storage.selectionkey, xhl2.storage.selectionrequirekey);
+                    xhl2.storage.selectionkey, xhl2.storage.selectionrequirekey,
+                    xhl2.storage.selectionhighlightall);
             }
             break;
         case "highlightshortcut":
