@@ -232,6 +232,7 @@ addon.port.on("settings", function(xhl2) {
     document.getElementById("selection").checked = xhl2.storage.enableselection;
     document.getElementById("selectionkey").checked = xhl2.storage.selectionrequirekey;
     document.getElementById("delayinput").value = xhl2.storage.selectiondelay;
+    document.getElementById("selectionhighlightall").checked = xhl2.storage.selectionhighlightall;
 
     let selColors = document.getElementsByClassName("selcolor");
     for (let i = 0; i < selColors.length; i++) {
@@ -289,7 +290,12 @@ function change(element) {
             value = element.value;
             index = null;
             break;
-
+        case element.id == "selectionhighlightall":
+            name = "selectionhighlightall";
+            value = element.checked;
+            index = null;
+            break;
+            
         //Advanced settings
         case element.id == "separator":
             name = "separator";

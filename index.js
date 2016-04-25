@@ -53,6 +53,9 @@ if (!xhl2.storage.enabled) {
     xhl2.storage.cleanshortcut = "Ctrl + Alt + Shift + O";
     xhl2.storage.selectionkey = "Shift";
 }
+if (typeof xhl2.storage.selectionhighlightall === 'undefined') {
+	xhl2.storage.selectionhighlightall = true;
+}
 
 //############# Add Menu Button #############//
 var btn = MenuButton({
@@ -127,6 +130,7 @@ panel.port.on("panel-changed", function(name, value, index) {
         case "selectiondelay":
         case "selectioncolors":
         case "selectionkey":
+        case "selectionhighlightall":
             for (let i = 0; i < selworkers.length; i++) {
                 selworkers[i].port.emit("selsettings",
                     xhl2.storage.selectioncolors, xhl2.storage.selectiondelay,
@@ -191,7 +195,6 @@ function selectionHighlight(text, colornumber) {
     worker.port.on("finished", function() { working = false; });
 };
 
-
 //########### CLEAN FUNCTION ###########//
 function clean(stuff) {
     working = true;
@@ -249,7 +252,8 @@ function selectionFunction() {
                 worker.port.on("selsettingsrequest", function() {
                     worker.port.emit("selsettings",
                         xhl2.storage.selectioncolors, xhl2.storage.selectiondelay,
-                        xhl2.storage.selectionkey, xhl2.storage.selectionrequirekey);
+                        xhl2.storage.selectionkey, xhl2.storage.selectionrequirekey,
+                        xhl2.storage.selectionhighlightall);
                 });
                 worker.port.on("selection", function(text, colornumber, job) {
                     if (job == "clean")

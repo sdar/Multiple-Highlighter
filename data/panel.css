@@ -326,6 +326,13 @@ input::-moz-color-swatch {
     margin-bottom: 10px;
 }
 
+#selectionhighlightalllabel {
+    margin-left: 40px;
+}
+
+#hlall {
+    margin-bottom: 15px;
+}
 
 /* ############## TAB 3 ############## */
 

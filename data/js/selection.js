@@ -11,11 +11,11 @@ let color = ['#ff0000', '#00ff00', '#0000ff', '#ffa500', '#ffff00'],
     },
     colornumber = 0,
     selection, text,
-    delay, hotkey, require,
+    delay, hotkey, require, highlightall,
     div = document.createElement("div");
 
 self.port.emit("selsettingsrequest");
-self.port.on("selsettings", function(rcolor, pdelay, photkey, prequire) {
+self.port.on("selsettings", function(rcolor, pdelay, photkey, prequire, phighlightall) {
     if (photkey == 'Space')
         keyCode = ' ';
     else
@@ -23,6 +23,7 @@ self.port.on("selsettings", function(rcolor, pdelay, photkey, prequire) {
     color = rcolor;
     delay = pdelay;
     require = prequire;
+    highlightall = phighlightall;
     div.style.background = color[0];
 });
 
@@ -50,7 +51,7 @@ div.style.color = "white";
 div.id = "xph2selection";
 div.textContent = "1";
 div.style.background = color[0];
-div.addEventListener('mousedown', test);
+div.addEventListener('mousedown', highlight);
 div.addEventListener("wheel", wheel);
 
 window.addEventListener("mouseup", mouseUp);
@@ -61,7 +62,7 @@ function mouseUp(event) {
 
     if (typeof selection === "undefined") return
     if (selection.toString() !== '') {
-        text = selection.toString().replace(/\s+$/, '');
+        text = selection.toString().trim();
         popup(event.clientX + "px", event.clientY + "px");
     } else {
         window.removeEventListener('keydown', keydown, false);
@@ -107,13 +108,25 @@ function keyup(event) {
     }
 }
 
-function test(event) {
+function highlight(event) {
     event.preventDefault();
-
-    let job;
-    if (event.which == 2 || event.which == 3) job = "clean";
-    else job = "highlight";
-    self.port.emit("selection", text, colornumber, job);
+    if (highlightall) {
+        let job;
+        if (event.which == 2 || event.which == 3) job = "clean";
+        else job = "highlight";
+        self.port.emit("selection", text, colornumber, job);
+    } else {
+        if (event.which == 1) {
+            selection = window.getSelection().getRangeAt(0);
+            let span = document.createElement("hlspan");
+            span.style.backgroundColor = color[colornumber];
+            span.style.color = getcontrast(color[colornumber]);
+            span.className = 'XPH2S' + colornumber;
+            selection.surroundContents(span.cloneNode());
+        } else if (event.which == 2 || event.which == 3){
+            self.port.emit("selection", text, colornumber, "clean");
+        }
+    }
 
     text = '';
     window.removeEventListener('keydown', keydown, false);
