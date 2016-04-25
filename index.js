@@ -33,23 +33,25 @@ if (xhl.storage.textareas) {
     xhl2.storage.colorpickers = Object.keys(colorpickersdata).map(function (key) {return colorpickersdata[key]});
 }
 
-//Highlight tab storage
-xhl2.storage.onloadenable = xhl2.storage.onloadenable || false;
-xhl2.storage.colorpickers = xhl2.storage.colorpickers || ["#FF0000", "#FF6600", "#FFFF00", "#33FF33", "#3333FF"];
-xhl2.storage.textareas = xhl2.storage.textareas || ["", "", "", "", ""];
-xhl2.storage.enabled = xhl2.storage.enabled || [true, true, true, true, true];
-xhl2.storage.casesens = xhl2.storage.casesens || [false, false, false, false, false];
-xhl2.storage.regexp = xhl2.storage.regexp || [false, false, false, false, false];
-//Selection tab storage
-xhl2.storage.enableselection = xhl2.storage.enableselection || true;
-xhl2.storage.selectionrequirekey = xhl2.storage.selectionrequirekey || true;
-xhl2.storage.selectiondelay = xhl2.storage.selectiondelay || 0;
-xhl2.storage.selectioncolors = xhl2.storage.selectioncolors || ["#5F72C9", "#C98A00", "#00FFFF", "#7FFFBB", "#999999"];
-//Advanced tab storage
-xhl2.storage.separator = xhl2.storage.separator || ",";
-xhl2.storage.highlightshortcut = xhl2.storage.highlightshortcut || "Ctrl + Shift + O";
-xhl2.storage.cleanshortcut = xhl2.storage.cleanshortcut || "Ctrl + Alt + Shift + O";
-xhl2.storage.selectionkey = xhl2.storage.selectionkey || "Shift";
+if (!xhl2.storage.enabled) {
+    //Highlight tab storage
+    xhl2.storage.onloadenable = false;
+    xhl2.storage.colorpickers = ["#FF0000", "#FF6600", "#FFFF00", "#33FF33", "#3333FF"];
+    xhl2.storage.textareas = ["", "", "", "", ""];
+    xhl2.storage.enabled = [true, true, true, true, true];
+    xhl2.storage.casesens = [false, false, false, false, false];
+    xhl2.storage.regexp = [false, false, false, false, false];
+    //Selection tab storage
+    xhl2.storage.enableselection = true;
+    xhl2.storage.selectionrequirekey = true;
+    xhl2.storage.selectiondelay = 0;
+    xhl2.storage.selectioncolors = ["#5F72C9", "#C98A00", "#00FFFF", "#7FFFBB", "#999999"];
+    //Advanced tab storage
+    xhl2.storage.separator = ",";
+    xhl2.storage.highlightshortcut = "Ctrl + Shift + O";
+    xhl2.storage.cleanshortcut = "Ctrl + Alt + Shift + O";
+    xhl2.storage.selectionkey = "Shift";
+}
 
 //############# Add Menu Button #############//
 var btn = MenuButton({
