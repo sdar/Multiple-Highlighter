@@ -22,12 +22,20 @@ self.port.on("selsettings", function(rcolor, pdelay, photkey, prequire) {
         keyCode = photkey;
     color = rcolor;
     delay = pdelay;
-    //keyCode = photkey;
     require = prequire;
     div.style.background = color[0];
 });
 
-//div.setAttribute("title","Right click or Middle Mouse Button to clean this color");
+self.port.on("detach", function() {
+    window.removeEventListener("mouseup", mouseUp);
+    window.removeEventListener('keydown', keydown, false);
+    window.removeEventListener('keyup', keyup, false);
+    if (document.getElementById("xph2selection")) {
+        let element = document.getElementById("xph2selection");
+        element.parentNode.removeChild(element);
+    }
+});
+
 div.style.cursor = "pointer";
 div.style.position = "fixed";
 div.style.zIndex = "2147483647";
@@ -45,10 +53,12 @@ div.style.background = color[0];
 div.addEventListener('mousedown', test);
 div.addEventListener("wheel", wheel);
 
-window.addEventListener("mouseup", function(event) {
+window.addEventListener("mouseup", mouseUp);
+
+function mouseUp(event) {
     if (event.which == 1)
         selection = window.getSelection();
-    
+
     if (typeof selection === "undefined") return
     if (selection.toString() !== '') {
         text = selection.toString().replace(/\s+$/, '');
@@ -56,10 +66,12 @@ window.addEventListener("mouseup", function(event) {
     } else {
         window.removeEventListener('keydown', keydown, false);
         window.removeEventListener('keyup', keyup, false);
-        if (document.getElementById("xph2selection"))
-            setTimeout(function() { document.getElementById("xph2selection").remove(); }, 0);
+        if (document.getElementById("xph2selection")) {
+            let element = document.getElementById("xph2selection");
+            element.parentNode.removeChild(element);
+        }
     }
-}, false);
+}
 
 function popup(x, y) {
     div.style.left = x;
@@ -88,8 +100,10 @@ function keydown(event) {
 
 function keyup(event) {
     if (event.key == keyCode) {
-        if (document.getElementById("xph2selection"))
-            document.getElementById('xph2selection').remove();
+        if (document.getElementById("xph2selection")) {
+            let element = document.getElementById("xph2selection");
+            element.parentNode.removeChild(element);
+        }
     }
 }
 
