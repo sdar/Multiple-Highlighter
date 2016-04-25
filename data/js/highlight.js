@@ -104,8 +104,9 @@ self.port.on("highlight", function(xhl2, foo) {
             text = matchesRegExpWithFlags.exec(xhl2.storage.textareas[i]);
             text = new RegExp(text[1], text[2]);
         } else {
-            text = xhl2.storage.textareas[i].replace(new RegExp(xhl2.storage.separator, 'g'), '|');
-            text = new RegExp(text.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&'), casesens);
+            text = xhl2.storage.textareas[i].replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
+            text = text.replace(new RegExp(xhl2.storage.separator, 'g'), '|');
+            text = new RegExp(text, casesens);
         }
         promises.push(findAndReplace(text, getcontrast(xhl2.storage.colorpickers[i]), xhl2.storage.colorpickers[i], 'XPH2' + i));
     }

@@ -112,15 +112,15 @@
                 <form action="#">
                     <input class="textinput" id="send" type="submit" value="Send" style="display:none"/>
                     <label for="separator" class="texto">‌Separator:</label>
-                    <input id="separator" type="text" value="," onfocus="addEvent(this);" onblur="removeEvent(this);" pattern="." title="The delimiter must be a single character, YOU NEED TO REFRESH FOR THE CHANGES TO TAKE EFFECT" required/>
+                    <input id="separator" type="text" value="," onfocus="addEvent(this);" onblur="removeEvent(this);" pattern="[^\[\\^$*+?.()|[\]{}\]]" title="The delimiter must be a single character (some characters are restricted)" required/>
                     <div id="shortcuts" class="texto">Shortcuts:</div>
-                    <input class="textinput" id="shortcutH" type="text" value="Ctrl + Shift + O" onfocus="addEvent(this);" onblur="removeEvent(this);" pattern="^.+\+ (?:(?!Ctrl|Alt|Shift).+)$" title="Hotkeys require at least one modifier: (Ctrl, Shift, Alt or Command(mac)), as well as a key, YOU NEED TO REFRESH FOR THE CHANGES TO TAKE EFFECT" />
+                    <input class="textinput" id="shortcutH" type="text" value="Ctrl + Shift + O" onfocus="addEvent(this);" onblur="removeEvent(this);" pattern="^.+\+ (?:(?!Ctrl|Alt|Shift).+)$" title="Hotkeys require at least one modifier: (Ctrl, Shift, Alt or Command(mac)), as well as a key" />
                     <label class="labeltext">Highlight</label>
                     <br>
-                    <input class="textinput" id="shortcutC" type="text" value="Ctrl + Alt + Shift + O" onfocus="addEvent(this);" onblur="removeEvent(this);" pattern="^.+\+ (?:(?!Ctrl|Alt|Shift).+)$" title="Hotkeys require at least one modifier: (Ctrl, Shift, Alt or Command(mac)), as well as a key, YOU NEED TO REFRESH FOR THE CHANGES TO TAKE EFFECT" />
+                    <input class="textinput" id="shortcutC" type="text" value="Ctrl + Alt + Shift + O" onfocus="addEvent(this);" onblur="removeEvent(this);" pattern="^.+\+ (?:(?!Ctrl|Alt|Shift).+)$" title="Hotkeys require at least one modifier: (Ctrl, Shift, Alt or Command(mac)), as well as a key" />
                     <label class="labeltext">Clean</label>
                     <br>
-                    <input class="textinput" id="shortcutK" type="text" value="Shift" onfocus="addEvent(this);" onblur="removeEvent(this);" pattern="(.|\w+)" title="Single key used to show the selection tooltip once a word has been selected, YOU NEED TO REFRESH FOR THE CHANGES TO TAKE EFFECT" />
+                    <input class="textinput" id="shortcutK" type="text" value="Shift" onfocus="addEvent(this);" onblur="removeEvent(this);" pattern="(.|\w+)" title="Single key used to show the selection tooltip once a word has been selected" />
                     <label class="labeltext">Selection key</label>
                 </form>
             </div>
