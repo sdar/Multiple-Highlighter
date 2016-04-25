@@ -12,7 +12,8 @@ var self = require("sdk/self"),
     working = false,
     contextm, list,
     highlightHK, cleanHK,
-    xhl2 = require("sdk/simple-storage");
+    xhl2 = require("sdk/simple-storage"),
+    selworkers = [];
 
 if (xhl.storage.textareas) {
     //onload
@@ -121,6 +122,16 @@ panel.port.on("panel-changed", function(name, value, index) {
             break;
         case "colorpickers":
             updatecm(value, index);
+            break;
+        case "selectionrequirekey":
+        case "selectiondelay":
+        case "selectioncolors":
+        case "selectionkey":
+            for (let i = 0; i < selworkers.length; i++) {
+                selworkers[i].port.emit("selsettings",
+                    xhl2.storage.selectioncolors, xhl2.storage.selectiondelay,
+                    xhl2.storage.selectionkey, xhl2.storage.selectionrequirekey);
+            }
             break;
         case "highlightshortcut":
         case "cleanshortcut":
@@ -234,22 +245,33 @@ function selectionFunction() {
             contentScriptWhen: "ready",
             contentScriptFile: self.data.url("js/selection.js"),
             onAttach: function(worker) {
+                selworkers.push(worker);
                 worker.port.on("selsettingsrequest", function() {
                     worker.port.emit("selsettings",
                         xhl2.storage.selectioncolors, xhl2.storage.selectiondelay,
                         xhl2.storage.selectionkey, xhl2.storage.selectionrequirekey);
                 });
-                worker.port.on("selection", function( text, colornumber, job) { 
-                if (job == "clean")
-                    selectionClean(text,colornumber);
-                else
-                    selectionHighlight(text,colornumber);
-            });
+                worker.port.on("selection", function(text, colornumber, job) {
+                    if (job == "clean")
+                        selectionClean(text, colornumber);
+                    else
+                        selectionHighlight(text, colornumber);
+                });
+                worker.on('detach', function() {
+                    seldetachWorker(this, selworkers);
+                });
             }
         });
     } else {
         if (selmod) selmod.destroy();
     }
+}
+
+function seldetachWorker(worker, workerArray) {
+  let pmmindex = workerArray.indexOf(worker);
+  if(pmmindex != -1) {
+    workerArray.splice(pmmindex, 1);
+  }
 }
 
 //############## CONTEXT MENU ##############//
