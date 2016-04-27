@@ -9,11 +9,11 @@
   "engines": {
     "firefox": ">=38.0a1"
   },
-  "permissions": {
-    "multiprocess": true
-  },
   "license": "MIT",
-  "permissions": {"private-browsing": true},
+  "permissions": {
+  	"private-browsing": true,
+  	"multiprocess": true
+  	},
   "icon": {
     "64": "data/icon-64.png"
   }
