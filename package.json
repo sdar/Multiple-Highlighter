@@ -7,7 +7,7 @@
   "author": "Sdar",
   "id": "@multiplehighlighter",
   "engines": {
-    "firefox": ">=38.0a1"
+    "firefox": ">=44.0.2"
   },
   "license": "MIT",
   "permissions": {
