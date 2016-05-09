@@ -111,20 +111,14 @@ self.port.on("highlight", function(xhl2, foo) {
         promises.push(findAndReplace(text, getcontrast(xhl2.storage.colorpickers[i]), xhl2.storage.colorpickers[i], 'XPH2' + i));
     }
     //All promises resolved.
-    Promise.all(promises).then(function() {
-        //the listen function has a timer so i need a ~200 timer here too
-        setTimeout(function() { self.port.emit("finished"); }, 220);
-    })
+    Promise.all(promises).then(function() { self.port.emit("finished"); });
 });
 
 self.port.on("selectionhighlight", function(seltext, color, colornumber) {
     let promises = [];
     let text = new RegExp(seltext.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&'), "gi");
     promises.push(findAndReplace(text, getcontrast(color), color, 'XPH2S' + colornumber));
-
-    Promise.all(promises).then(function() {
-        setTimeout(function() { self.port.emit("finished") }, 220);
-    })
+    Promise.all(promises).then(function() { self.port.emit("finished"); });
 });
 
 //Function that get the font color (YIQ)

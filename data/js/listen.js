@@ -28,7 +28,5 @@ function observeDomChanges(rootNode, callback) {
 
 observeDomChanges(document.body, function(node) {
     clearTimeout(tim);
-    tim = setTimeout(function() {
-        self.port.emit("onloadhl")
-    }, 200);
+    tim = setTimeout(function() { self.port.emit("onloadhl") }, 200);
 });

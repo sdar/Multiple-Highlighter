@@ -21,15 +21,11 @@ self.port.on("clean", function(arr) {
     } else {
         promises.push(clean('XPH2' + arr));
     }
-    Promise.all(promises).then(function() {
-        setTimeout(function() { self.port.emit("finished") }, 220);
-    })
+    Promise.all(promises).then(function() { self.port.emit("finished"); });
 });
 
 self.port.on("selectionclean", function(arr) {
     let promises = [];
     promises.push(clean(arr));
-    Promise.all(promises).then(function() {
-        setTimeout(function() { self.port.emit("finished") }, 220);
-    })
+    Promise.all(promises).then(function() { self.port.emit("finished"); });
 });
