@@ -244,6 +244,8 @@ addon.port.on("settings", function(xhl2) {
     document.getElementById("shortcutH").value = xhl2.storage.highlightshortcut;
     document.getElementById("shortcutC").value = xhl2.storage.cleanshortcut;
     document.getElementById("shortcutK").value = xhl2.storage.selectionkey;
+    document.getElementById("hlAsYouType").value = xhl2.storage.highlightAsYouType;
+    document.getElementById("hlOnAdd").value = xhl2.storage.highlightOnAdd;
 
 });
 
