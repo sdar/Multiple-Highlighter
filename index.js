@@ -56,6 +56,12 @@ if (!xhl2.storage.enabled) {
 if (typeof xhl2.storage.selectionhighlightall === 'undefined') {
 	xhl2.storage.selectionhighlightall = true;
 }
+if (typeof xhl2.storage.highlightAsYouType === 'undefined') {
+    xhl2.storage.highlightAsYouType = false;
+}
+if (typeof xhl2.storage.highlightOnAdd === 'undefined') {
+    xhl2.storage.highlightOnAdd = false;
+}
 
 //############# Add Menu Button #############//
 var btn = MenuButton({
@@ -118,6 +124,17 @@ panel.port.on("panel-changed", function(name, value, index) {
         case "enabled":
         	if (xhl2.storage.textareas[index]) {
             	value == true ? highlight(index) : clean(index);
+            }
+            break;
+        case "textareas":
+            if (xhl2.storage.highlightAsYouType) {
+                timer.clearTimeout(paneldelay);
+                timer.setTimeout(function(){
+                    clean(index);
+                    if (xhl2.storage.enabled[index] && xhl2.storage.textareas[index] && xhl2.storage.textareas[index] != " ") {
+                        highlight(index);
+                    }
+                }, 100);
             }
             break;
         case "enableselection":
@@ -330,4 +347,6 @@ function addtolist(text) {
         xhl2.storage.textareas[text[1]] = xhl2.storage.textareas[text[1]] + xhl2.storage.separator + text[0];
 
     panel.port.emit("updatetextareas", text[1], xhl2.storage.textareas[text[1]]);
+    if (xhl2.storage.highlightOnAdd)
+        highlight(text[1]);
 }

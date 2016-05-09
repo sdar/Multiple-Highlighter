@@ -8,6 +8,7 @@ function clean(something) {
             y[0].parentNode.insertBefore(y[0].firstChild, y[0]);
             y[0].parentNode.removeChild(y[0]);
         }
+        document.normalize();
         resolve();
     });
 }

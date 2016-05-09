@@ -41,7 +41,7 @@
                 <div id="textcont">
                     <div class="row" id="row0">
                         <input type=color class="colorpicker hlColor" value="#ff0000" title="Click here to select color" onchange="change(this);">
-                        <textarea class="textarea" onblur="tResize(this);" onFocus="tResize();"></textarea>
+                        <textarea class="textarea" onblur="tResize(this);" onFocus="tResize();" oninput="change(this);"></textarea>
                         <label for="enable0" class="checkbox-cont" title="Rows with false value will not be highlighted, you can also highlight/clean the selected color togling this value">
                             <input type="checkbox" id="enable0" class="checkbox cbEnable" onclick="change(this);"/>
                             <label class="cblabel" for="enable0"><span></span></label>
@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div id="add" class="container">
-                    <button id="addbutton" onclick="addrow();" title="This adds a new row">Add</button>
+                    <button id="addbutton" onclick="addrow();" title="This adds a new row">Add more colors</button>
                 </div>
             </div>
             <div id="Selection" class="tabcontent">
@@ -79,11 +79,11 @@
                     </div>
                 </div>
                 <div id="hlall">
-                    <label for="selectionhighlightall" class="checkbox-cont" title="When disabled only the selected text will be selected instead of all matches">
+                    <label for="selectionhighlightall" class="checkbox-cont" title="When disabled only the selected text will be highlighted instead of all matches">
                         <input type="checkbox" id="selectionhighlightall" class="checkbox" onclick="change(this);"/>
                         <label class="cblabel" for="selectionhighlightall"><span></span></label>
                     </label>
-                    <label id="selectionhighlightalllabel" for="selectionhighlightall" class="bottext" title="When disabled only the selected text will be selected instead of all matches">Highlight all</label>
+                    <label id="selectionhighlightalllabel" for="selectionhighlightall" class="bottext" title="When disabled only the selected text will be highlighted instead of all matches">Highlight all</label>
                 </div>
                 <div id="selectioncolor">
                     <div>
@@ -122,6 +122,23 @@
                     <br>
                     <input class="textinput" id="shortcutK" type="text" value="Shift" onfocus="addEvent(this);" onblur="removeEvent(this);" pattern="(.|\w+)" title="Single key used to show the selection tooltip once a word has been selected" />
                     <label class="labeltext">Selection key</label>
+                    <div id="shortcuts" class="texto">Other:</div>
+                    <div id="advancedcheckbox">
+                        <div id="HighlightAsYouType">
+                            <label for="hlAsYouType" class="checkbox-cont" title="Highlight text as you type">
+                                <input type="checkbox" id="hlAsYouType" class="checkbox" onclick="change(this);"/>
+                                <label class="cblabel" for="hlAsYouType"><span></span></label>
+                            </label>
+                            <label id="hlAsYouTypelabel" for="hlAsYouType" class="bottext" title="Highlight text as you type">Highlight as you type</label>
+                        </div>
+                        <div id="HighlightOnAdd">
+                            <label for="hlOnAdd" class="checkbox-cont" title="Highlight a list when a word is added through the contextual menu">
+                                <input type="checkbox" id="hlOnAdd" class="checkbox" onclick="change(this);"/>
+                                <label class="cblabel" for="hlOnAdd"><span></span></label>
+                            </label>
+                            <label id="hlOnAddlabel" for="hlOnAdd" class="bottext" title="Highlights a list when a word is added through the contextual menu">Highlight list on add</label>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

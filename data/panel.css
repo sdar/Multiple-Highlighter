@@ -361,7 +361,14 @@ input::-moz-color-swatch {
     width: 12px;
 }
 
+#advancedcheckbox {
+    clear: both;
+    display: flex;
+    justify-content: space-between;
+    width: 95%;
+    margin-bottom: 5px;
+}
 
-/*.row .checkbox-cont {
-    display: none;
-}*/
+#hlAsYouTypelabel, #hlOnAddlabel {
+    margin-left: 30px;
+}

@@ -317,6 +317,16 @@ function change(element) {
             value = element.value;
             index = null;
             break;
+        case element.id == "hlAsYouType":
+            name = "highlightAsYouType";
+            value = element.checked;
+            index = null;
+            break;
+        case element.id == "hlOnAdd":
+            name = "highlightOnAdd";
+            value = element.checked;
+            index = null;
+            break;
 
         //Highlight row settings
         case element.className == "colorpicker hlColor":

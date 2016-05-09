@@ -104,7 +104,7 @@ self.port.on("highlight", function(xhl2, foo) {
             text = matchesRegExpWithFlags.exec(xhl2.storage.textareas[i]);
             text = new RegExp(text[1], text[2]);
         } else {
-            text = xhl2.storage.textareas[i].replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
+            text = validate(xhl2.storage.textareas[i]);
             text = text.replace(new RegExp(xhl2.storage.separator, 'g'), '|');
             text = new RegExp(text, casesens);
         }
@@ -120,6 +120,15 @@ self.port.on("selectionhighlight", function(seltext, color, colornumber) {
     promises.push(findAndReplace(text, getcontrast(color), color, 'XPH2S' + colornumber));
     Promise.all(promises).then(function() { self.port.emit("finished"); });
 });
+
+function validate (str) {
+    //Escape regexp characters
+    str = str.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
+    //remove last character if ',' or ', '.
+    if (/,$/.test(str)) str = str.slice(0, -1);
+    if (/, $/.test(str)) str = str.slice(0, -2);
+    return str;
+}
 
 //Function that get the font color (YIQ)
 //more info: http://24ways.org/2010/calculating-color-contrast/
