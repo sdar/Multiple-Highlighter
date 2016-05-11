@@ -15,9 +15,13 @@ function findAndReplace(searchText, color, bgcolor, spanclass) {
         while (walker.nextNode()) {
             if (searchText.test(walker.currentNode.nodeValue) && walker.currentNode.parentNode.className != spanclass && (excludes + ',').indexOf(walker.currentNode.parentNode.nodeName.toLowerCase() + ',') === -1) {
                 if (spanclasses.test(walker.currentNode.parentNode.className)) {
-                    walker.currentNode.parentNode.className = spanclass;
-                    walker.currentNode.parentNode.style.color = color;
-                    walker.currentNode.parentNode.style.backgroundColor = bgcolor;
+                    if (walker.currentNode.textContent != walker.currentNode.textContent.match(searchText))
+                        nodearray.push(walker.currentNode);
+                    else {
+                        walker.currentNode.parentNode.className = spanclass;
+                        walker.currentNode.parentNode.style.color = color;
+                        walker.currentNode.parentNode.style.backgroundColor = bgcolor;
+                    }
                 } else {
                     nodearray.push(walker.currentNode);
                 }
@@ -121,7 +125,7 @@ self.port.on("selectionhighlight", function(seltext, color, colornumber) {
     Promise.all(promises).then(function() { self.port.emit("finished"); });
 });
 
-function validate (str) {
+function validate(str) {
     //Escape regexp characters
     str = str.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
     //remove last character if ',' or ', '.
