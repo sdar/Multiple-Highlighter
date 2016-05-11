@@ -108,8 +108,7 @@ self.port.on("highlight", function(xhl2, foo) {
             text = matchesRegExpWithFlags.exec(xhl2.storage.textareas[i]);
             text = new RegExp(text[1], text[2]);
         } else {
-            text = validate(xhl2.storage.textareas[i]);
-            text = text.replace(new RegExp(xhl2.storage.separator, 'g'), '|');
+            text = validate(xhl2.storage.textareas[i],xhl2.storage.separator);
             text = new RegExp(text, casesens);
         }
         promises.push(findAndReplace(text, getcontrast(xhl2.storage.colorpickers[i]), xhl2.storage.colorpickers[i], 'XPH2' + i));
@@ -125,12 +124,16 @@ self.port.on("selectionhighlight", function(seltext, color, colornumber) {
     Promise.all(promises).then(function() { self.port.emit("finished"); });
 });
 
-function validate(str) {
-    //Escape regexp characters
+function validate(str, separator) {
+    //remove last character if separator or separator+' '.
+    if (str.slice(-1) == ' ') str = str.slice(0, -1);
+    if (str.slice(-1) == separator) str = str.slice(0, -1);
+    //Escape regexp characters on string and separator
     str = str.replace(/[\\^$*+?.()|[\]{}]/g, '\\$&');
-    //remove last character if ',' or ', '.
-    if (/,$/.test(str)) str = str.slice(0, -1);
-    if (/, $/.test(str)) str = str.slice(0, -2);
+    if (/[\\^$*+?.()|[\]{}]/.test(separator))
+        separator = separator.replace(/[\\^$*+?.()|[\]{}]/g, '\\\\\\$&');
+    //replace separator for |
+    str = str.replace(new RegExp(separator, 'g'), '|');
     return str;
 }
 
