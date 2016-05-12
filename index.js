@@ -127,7 +127,7 @@ panel.port.on("panel-changed", function(name, value, index) {
             }
             break;
         case "textareas":
-            if (xhl2.storage.highlightAsYouType) {
+            if (xhl2.storage.highlightAsYouType && !xhl2.storage.regexp[index]) {
                 timer.clearTimeout(paneldelay);
                 timer.setTimeout(function(){
                     clean(index);
