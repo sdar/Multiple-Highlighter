@@ -19,7 +19,7 @@ function clean(myarr, nodeclass) {
         frag.appendChild(myarr[i].cloneNode(true));
         elements = frag.querySelectorAll('.' + nodeclass);
         for (let i = 0, l = elements.length; i < l; i++) {
-            elements[i].outerHTML = elements[i].textContent;
+            elements[i].parentNode.replaceChild(document.createTextNode(elements[i].textContent), elements[i]);
         }
         frag.normalize();
         myarr[i].parentNode.replaceChild(frag, myarr[i]);
