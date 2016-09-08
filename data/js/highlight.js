@@ -6,7 +6,7 @@ function findAndReplace(searchText, color, bgcolor, spanclass) {
         walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT),
         excludes = 'style,title,link,script,noscript,object,canvas,applet',
         spanclasses = /XPH2/,
-        span = document.createElement("hlspan");
+        span = document.createElement("span");
     span.style.backgroundColor = bgcolor;
     span.style.color = color;
     span.className = spanclass;
