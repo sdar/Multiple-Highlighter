@@ -10,6 +10,7 @@ function findAndReplace(searchText, color, bgcolor, spanclass) {
     span.style.backgroundColor = bgcolor;
     span.style.color = color;
     span.className = spanclass;
+    span.style.display = "initial";
 
     return new Promise(function(resolve) {
         while (walker.nextNode()) {
